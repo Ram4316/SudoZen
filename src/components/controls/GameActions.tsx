@@ -4,6 +4,26 @@ import { Undo2, Eraser, PenLine, Lightbulb } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: "spring" as const, stiffness: 400, damping: 25 }
+  }
+};
+
 export const GameActions: React.FC = () => {
   const { eraseCell, toggleNotesMode, notesMode, undo, status, history } = useGameStore();
 
@@ -39,11 +59,17 @@ export const GameActions: React.FC = () => {
   ];
 
   return (
-    <div className="w-full max-w-[450px] flex justify-between items-center px-4 mb-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="w-full max-w-[450px] flex justify-between items-center px-4 mb-4"
+    >
       {actions.map(({ icon: Icon, label, onClick, disabled, active }) => (
         <motion.button
           key={label}
-          whileTap={{ scale: 0.9 }}
+          variants={itemVariants}
+          whileTap={{ scale: 0.94 }}
           onClick={onClick}
           disabled={disabled}
           className="flex flex-col items-center justify-center gap-1 min-w-[64px] disabled:opacity-40 disabled:cursor-not-allowed"
@@ -57,13 +83,13 @@ export const GameActions: React.FC = () => {
             <Icon size={22} strokeWidth={2} />
           </div>
           <span className={cn(
-            "text-xs font-medium",
+            "text-xs font-medium transition-colors",
             active ? "text-zen-primary" : "text-zen-textMuted"
           )}>
             {label}
           </span>
         </motion.button>
       ))}
-    </div>
+    </motion.div>
   );
 };

@@ -49,16 +49,18 @@ export const Cell: React.FC<CellProps> = ({ index }) => {
 
   return (
     <motion.div
-      whileTap={{ scale: 0.95, opacity: 0.8 }}
+      whileTap={{ scale: 0.96 }}
+      animate={isSelected ? { scale: 1.02, zIndex: 10 } : { scale: 1, zIndex: 0 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
       onClick={() => selectCell(index)}
       className={cn(
-        "relative flex items-center justify-center text-lg sm:text-xl font-medium cursor-pointer transition-all duration-200 select-none",
+        "relative flex items-center justify-center text-lg sm:text-xl font-medium cursor-pointer transition-colors duration-200 select-none",
         "w-full aspect-square border-r border-b border-white/[0.03]",
         isRightBlockEdge && "border-r border-r-white/[0.15]",
         isBottomBlockEdge && "border-b border-b-white/[0.15]",
 
         // Background colors based on state (translucent for depth)
-        isSelected && "bg-zen-primary/20 shadow-glow-sm border border-zen-primary/50 z-10 scale-[1.02] rounded-md",
+        isSelected && "bg-zen-primary/20 shadow-glow-sm border border-zen-primary/50 rounded-md",
         !isSelected && isMatchingValue && "bg-zen-primary/10",
         !isSelected && !isMatchingValue && isRelated && "bg-white/[0.04]",
         !isSelected && !isMatchingValue && !isRelated && "bg-transparent",
@@ -70,9 +72,10 @@ export const Cell: React.FC<CellProps> = ({ index }) => {
     >
       {value !== 0 ? (
         <motion.span
-          initial={{ opacity: 0, scale: 0.8 }}
+          key={value} // ensures animation plays when value changes
+          initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.15 }}
+          transition={{ type: "spring", stiffness: 500, damping: 20 }}
           style={{ textShadow: !isGiven && !isMistake ? '0 1px 3px rgba(139, 92, 246, 0.4)' : 'none' }}
           className={cn(
             "font-semibold",

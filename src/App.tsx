@@ -9,6 +9,10 @@ import { DailyModal } from './components/modals/DailyModal';
 import { Celebration } from './components/ui/Celebration';
 import { Settings, Trophy, Calendar } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+export const springConfig = { type: "spring" as const, bounce: 0.2, duration: 0.5 };
+export const smoothEase = [0.16, 1, 0.3, 1] as const;
 
 export default function App() {
   const { status, startNewGame, difficulty } = useGameStore();
@@ -39,54 +43,109 @@ export default function App() {
         </div>
       </div>
 
-      {status === 'idle' ? (
-        <div className="flex-1 w-full max-w-[450px] flex flex-col items-center justify-center px-6 text-center">
-          <div className="w-24 h-24 bg-zen-surface rounded-3xl rotate-12 flex items-center justify-center mb-8 shadow-zen border border-zen-border/50">
-            <span className="text-4xl font-bold text-zen-primary -rotate-12">9</span>
-          </div>
-          <h2 className="text-2xl font-semibold text-zen-text mb-2">Find Your Focus</h2>
-          <p className="text-sm text-zen-textMuted mb-12">
-            Select a difficulty to start a new premium Sudoku experience.
-          </p>
+      <AnimatePresence mode="wait">
+        {status === 'idle' ? (
+          <motion.div
+            key="idle"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
+            transition={{ duration: 0.4, ease: smoothEase }}
+            className="flex-1 w-full max-w-[450px] flex flex-col items-center justify-center px-6 text-center"
+          >
+            <motion.div
+              initial={{ scale: 0.9, rotate: 0 }}
+              animate={{ scale: 1, rotate: 12 }}
+              transition={{ delay: 0.1, ...springConfig }}
+              className="w-24 h-24 bg-zen-surface rounded-3xl flex items-center justify-center mb-8 shadow-zen border border-zen-border/50"
+            >
+              <span className="text-4xl font-bold text-zen-primary -rotate-12">9</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4, ease: smoothEase }}
+              className="text-2xl font-semibold text-zen-text mb-2"
+            >
+              Find Your Focus
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.4, ease: smoothEase }}
+              className="text-sm text-zen-textMuted mb-12"
+            >
+              Select a difficulty to start a new premium Sudoku experience.
+            </motion.p>
 
-          <div className="grid grid-cols-2 gap-3 w-full">
-            {(['easy', 'medium', 'hard', 'expert'] as const).map((diff) => (
-              <button
-                key={diff}
-                onClick={() => startNewGame(diff)}
-                className="py-4 bg-zen-surface hover:bg-zen-surfaceHover rounded-2xl font-medium text-zen-text capitalize transition-colors border border-zen-border/30"
-              >
-                {diff}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <>
-          <Timer />
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.4, ease: smoothEase }}
+              className="grid grid-cols-2 gap-3 w-full"
+            >
+              {(['easy', 'medium', 'hard', 'expert'] as const).map((diff) => (
+                <motion.button
+                  key={diff}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => startNewGame(diff)}
+                  className="py-4 bg-zen-surface hover:bg-zen-surfaceHover rounded-2xl font-medium text-zen-text capitalize transition-colors border border-zen-border/30"
+                >
+                  {diff}
+                </motion.button>
+              ))}
+            </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="playing"
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.4, ease: smoothEase }}
+            className="w-full flex-1 flex flex-col items-center"
+          >
+            <Timer />
 
-          {/* Main Game Area */}
-          <div className="flex-1 w-full flex flex-col items-center justify-center px-2 relative">
-            <Board />
+            {/* Main Game Area */}
+            <div className="flex-1 w-full flex flex-col items-center justify-center px-2 relative">
+              <Board />
 
-            {/* Paused Overlay */}
-            {status === 'paused' && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-zen-darker/80 backdrop-blur-sm rounded-xl">
-                 <div className="text-2xl font-medium text-zen-text tracking-widest uppercase">Paused</div>
-              </div>
-            )}
+              {/* Paused Overlay */}
+              <AnimatePresence>
+                {status === 'paused' && (
+                  <motion.div
+                    initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+                    animate={{ opacity: 1, backdropFilter: 'blur(4px)' }}
+                    exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+                    transition={{ duration: 0.3, ease: smoothEase }}
+                    className="absolute inset-0 z-10 flex items-center justify-center bg-zen-darker/60 rounded-xl"
+                  >
+                     <motion.div
+                       initial={{ scale: 0.95, opacity: 0 }}
+                       animate={{ scale: 1, opacity: 1 }}
+                       exit={{ scale: 0.95, opacity: 0 }}
+                       transition={springConfig}
+                       className="text-2xl font-medium text-zen-text tracking-widest uppercase"
+                     >
+                       Paused
+                     </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            {/* Celebration/Game Over Overlay */}
-            <Celebration />
-          </div>
+              {/* Celebration/Game Over Overlay */}
+              <Celebration />
+            </div>
 
-          {/* Controls Area */}
-          <div className="w-full flex flex-col items-center mt-auto pb-safe">
-            <GameActions />
-            <NumberPad />
-          </div>
-        </>
-      )}
+            {/* Controls Area */}
+            <div className="w-full flex flex-col items-center mt-auto pb-safe">
+              <GameActions />
+              <NumberPad />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Modals */}
       <SettingsModal isOpen={activeModal === 'settings'} onClose={() => setActiveModal(null)} />
