@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-zen-darker text-zen-text antialiased font-sans selection:bg-zen-primary selection:text-white overscroll-none;
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Custom scrollbar for webkit (if needed, though mobile focuses on touch) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zen-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zen-textMuted;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-zen-surface/80 backdrop-blur-md border border-zen-border/50 shadow-zen;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
