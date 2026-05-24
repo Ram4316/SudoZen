@@ -32,6 +32,9 @@ export default {
       boxShadow: {
         'zen': '0 4px 20px rgba(0, 0, 0, 0.3)',
         'zen-sm': '0 2px 10px rgba(0, 0, 0, 0.2)',
+        'glow': '0 0 15px rgba(139, 92, 246, 0.3)',
+        'glow-sm': '0 0 8px rgba(139, 92, 246, 0.4)',
+        'glass-inner': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.2)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',

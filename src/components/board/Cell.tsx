@@ -43,29 +43,29 @@ export const Cell: React.FC<CellProps> = ({ index }) => {
   // Mistake detection
   const isMistake = showMistakes && value !== 0 && !isGiven && value !== solution[index];
 
-  // Borders for the 3x3 grid
-  const borderRight = (col + 1) % 3 === 0 && col !== 8;
-  const borderBottom = (row + 1) % 3 === 0 && row !== 8;
+  // Borders for the 3x3 grid hierarchy
+  const isRightBlockEdge = (col + 1) % 3 === 0 && col !== 8;
+  const isBottomBlockEdge = (row + 1) % 3 === 0 && row !== 8;
 
   return (
     <motion.div
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.95, opacity: 0.8 }}
       onClick={() => selectCell(index)}
       className={cn(
-        "relative flex items-center justify-center text-lg sm:text-xl font-medium cursor-pointer transition-colors duration-150 select-none",
-        "w-full aspect-square border border-zen-border/40",
-        borderRight && "border-r-2 border-r-zen-border",
-        borderBottom && "border-b-2 border-b-zen-border",
+        "relative flex items-center justify-center text-lg sm:text-xl font-medium cursor-pointer transition-all duration-200 select-none",
+        "w-full aspect-square border-r border-b border-white/[0.03]",
+        isRightBlockEdge && "border-r border-r-white/[0.15]",
+        isBottomBlockEdge && "border-b border-b-white/[0.15]",
 
-        // Background colors based on state
-        isSelected && "bg-zen-selection",
-        !isSelected && isMatchingValue && "bg-zen-highlight",
-        !isSelected && !isMatchingValue && isRelated && "bg-zen-surfaceHover",
-        !isSelected && !isMatchingValue && !isRelated && "bg-zen-surface",
+        // Background colors based on state (translucent for depth)
+        isSelected && "bg-zen-primary/20 shadow-glow-sm border border-zen-primary/50 z-10 scale-[1.02] rounded-md",
+        !isSelected && isMatchingValue && "bg-zen-primary/10",
+        !isSelected && !isMatchingValue && isRelated && "bg-white/[0.04]",
+        !isSelected && !isMatchingValue && !isRelated && "bg-transparent",
 
         // Text colors
-        isGiven ? "text-zen-text" : "text-zen-primary",
-        isMistake && "text-zen-error bg-zen-error/10",
+        isGiven ? "text-zen-text/90" : "text-zen-primary shadow-sm",
+        isMistake && "text-zen-error bg-zen-error/10 border-zen-error/30 shadow-none",
       )}
     >
       {value !== 0 ? (
@@ -73,9 +73,10 @@ export const Cell: React.FC<CellProps> = ({ index }) => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.15 }}
+          style={{ textShadow: !isGiven && !isMistake ? '0 1px 3px rgba(139, 92, 246, 0.4)' : 'none' }}
           className={cn(
             "font-semibold",
-            isMistake && "animate-pulse-slow"
+            isMistake && "animate-pulse-slow drop-shadow-none"
           )}
         >
           {value}
